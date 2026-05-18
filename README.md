@@ -48,17 +48,41 @@ enabling HR teams to take proactive retention measures.
 - Low salary employees under 3000 have highest attrition at 28.61%
 - Newly promoted employees leave most due to promotion triggering job search
 - Age group 18-25 has highest attrition at 34.78%
+- TF-IDF NLP revealed Sales Executive and Lab Technician roles are 
+  distinctively overrepresented among employees who left
+
+## Custom Engineered Features
+| Feature | Logic | Business Reason |
+|---|---|---|
+| PromotionRisk | YearsSinceLastPromotion >= 3 | No growth = higher exit risk |
+| HikeRisk | PercentSalaryHike <= 14% | Low hike band had highest attrition |
+| OvertimeRisk | Overtime = Yes AND Income < 5000 | Compounding stress factor |
 
 ## ML Models Comparison
-Model                    Accuracy   F1 Score   ROC-AUC
-XGBoost + SMOTE          85.7%      0.4167     0.6393
-Logistic Regression      76.2%      0.3750     0.6343
-Random Forest            83.7%      0.3333     0.6013
+| Model | Accuracy | F1 Score | ROC-AUC |
+|---|---|---|---|
+| XGBoost + SMOTE | 85.7% | 0.4167 | 0.6393 |
+| Logistic Regression | 76.2% | 0.3750 | 0.6343 |
+| Random Forest | 83.7% | 0.3333 | 0.6013 |
 
-Best Model: XGBoost + SMOTE
-High Risk  (above 60%)  - 22 employees  - Immediate HR intervention
-Medium Risk (30-60%)    - 18 employees  - Monitor closely
-Low Risk   (below 30%)  - 251 employees - Stable
+**Best Model: XGBoost + SMOTE**
+
+
+## Threshold Tuning
+To maximize Recall (catching more at-risk employees), prediction threshold was tuned:
+- Threshold 0.3 → Higher Recall, catches more at-risk employees ✅ Selected
+- Threshold 0.4 → Balanced Precision and Recall
+- Threshold 0.5 → Default, higher Precision
+
+Selected threshold 0.3 because missing a truly at-risk employee is more 
+costly than a false alarm (replacing an employee costs 50-200% of annual salary).
+
+## Employee Risk Distribution
+| Risk Level | Employees | Action |
+|---|---|---|
+| High Risk (>60%) | 22 | Immediate HR intervention |
+| Medium Risk (30-60%) | 18 | Monitor closely |
+| Low Risk (<30%) | 251 | Stable |
 
 ## HR Recommendations
 1. Review compensation for Sales and Lab Technician roles
